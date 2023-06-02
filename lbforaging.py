@@ -5,6 +5,7 @@ import time
 import gym
 import numpy as np
 import lbforaging
+gym.logger.set_level(40)
 
 
 logger = logging.getLogger(__name__)
