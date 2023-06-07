@@ -465,7 +465,7 @@ class ForagingEnv(Env):
         nreward = [get_player_reward(obs) for obs in observations]
         ndone = [obs.game_over for obs in observations]
         # ninfo = [{'observation': obs} for obs in observations]
-        ninfo = {}
+        ninfo = [self.loaded]
         
         # check the space of obs
         for i, obs in  enumerate(nobs):
@@ -483,6 +483,7 @@ class ForagingEnv(Env):
             self.max_food, self.max_food_level#max_level=sum(player_levels[:3])
         )
         self.current_step = 0
+        self.loaded = 0
         self._game_over = False
         self._gen_valid_moves()
 
@@ -500,16 +501,15 @@ class ForagingEnv(Env):
 
     def step(self, actions):
         self.current_step += 1
+        self.loaded = 0
+        
+        # self.action_space = ()
 
-        """
-        self.action_space = ()
-
-
-        for i in range(len(self.players)):
-            print(self._make_obs(self.players[i]))
-            print(self.players[i].step(self._make_obs(self.players[i])))
-            self.action_space += (self.players[i].step(self._make_obs(self.players[i])),)
-        """
+        # for i in range(len(self.players)):
+        #     #print(self._make_obs(self.players[i]))
+        #     #print(self.players[i].step(self._make_obs(self.players[i])))
+        #     self.action_space += (self.players[i].step(self._make_obs(self.players[i])),)
+        
 
         for p in self.players:
             p.reward = 0
@@ -582,6 +582,7 @@ class ForagingEnv(Env):
 
             # else the food was loaded and each player scores points
             for a in adj_players:
+                self.loaded = self.current_step
                 a.reward = float(a.level * food)
                 if self._normalize_reward:
                     a.reward = a.reward / float(

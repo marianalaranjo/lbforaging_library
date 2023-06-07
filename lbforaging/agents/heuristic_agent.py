@@ -55,8 +55,7 @@ class H1(HeuristicAgent):
         y, x = self.observed_position
 
         if (abs(r - y) + abs(c - x)) == 1:
-            return 5
-            #return Action.LOAD
+            return Action.LOAD
 
         try:
             return self._move_towards((r, c), obs.actions)
