@@ -79,7 +79,7 @@ class ForagingEnv(Env):
     def __init__(
         self,
         players,
-        max_player_level,
+        max_food_level,
         field_size,
         max_food,
         sight,
@@ -103,7 +103,7 @@ class ForagingEnv(Env):
         
         self.max_food = max_food
         self._food_spawned = 0.0
-        self.max_player_level = max_player_level
+        self.max_food_level = max_food_level
         self.sight = sight
         self.force_coop = force_coop
         self._game_over = None
@@ -137,13 +137,13 @@ class ForagingEnv(Env):
             # field_size = field_x * field_y
 
             max_food = self.max_food
-            max_food_level = self.max_player_level * len(self.players)
+            #max_food_level = self.max_player_level * len(self.players)
 
             min_obs = [-1, -1, 0] * max_food + [-1, -1, 0] * len(self.players)
-            max_obs = [field_x-1, field_y-1, max_food_level] * max_food + [
+            max_obs = [field_x-1, field_y-1, self.max_food_level] * max_food + [
                 field_x-1,
                 field_y-1,
-                self.max_player_level,
+                self.max_food_level,
             ] * len(self.players)
         else:
             # grid observation space
@@ -151,12 +151,12 @@ class ForagingEnv(Env):
 
             # agents layer: agent levels
             agents_min = np.zeros(grid_shape, dtype=np.float32)
-            agents_max = np.ones(grid_shape, dtype=np.float32) * self.max_player_level
+            agents_max = np.ones(grid_shape, dtype=np.float32) * 1
 
             # foods layer: foods level
-            max_food_level = self.max_player_level * len(self.players)
+            #max_food_level = self.max_player_level * len(self.players)
             foods_min = np.zeros(grid_shape, dtype=np.float32)
-            foods_max = np.ones(grid_shape, dtype=np.float32) * max_food_level
+            foods_max = np.ones(grid_shape, dtype=np.float32) * self.max_food_level
 
             # access layer: i the cell available
             access_min = np.zeros(grid_shape, dtype=np.float32)
@@ -476,11 +476,11 @@ class ForagingEnv(Env):
 
     def reset(self):
         self.field = np.zeros(self.field_size, np.int32)
-        self.spawn_players(self.max_player_level)
-        player_levels = sorted([player.level for player in self.players])
+        self.spawn_players(1)
+        #player_levels = sorted([player.level for player in self.players])
 
         self.spawn_food(
-            self.max_food, max_level=sum(player_levels[:3])
+            self.max_food, self.max_food_level#max_level=sum(player_levels[:3])
         )
         self.current_step = 0
         self._game_over = False
@@ -569,11 +569,12 @@ class ForagingEnv(Env):
                 p for p in adj_players if p in loading_players or p is player
             ]
 
-            adj_player_level = sum([a.level for a in adj_players])
+            # adj_player_level = sum([a.level for a in adj_players])
+            adj_player_level = len(adj_players)
 
             loading_players = loading_players - set(adj_players)
 
-            if adj_player_level < food:
+            if adj_player_level < food/5:
                 # failed to load
                 for a in adj_players:
                     a.reward -= self.penalty

@@ -7,6 +7,7 @@ import numpy as np
 import lbforaging
 from lbforaging.foraging.environment import Action
 gym.logger.set_level(40)
+from gym.envs.registration import register
 
 
 logger = logging.getLogger(__name__)
@@ -36,11 +37,28 @@ def _game_loop(env, render):
             time.sleep(0.5)
 
         done = np.all(ndone)
-    # print(env.players[0].score, env.players[1].score)
+    #print(env.players[0].score, env.players[1].score)
 
 
 def main(game_count=1, render=False):
-    env = gym.make("Foraging-8x8-2p-2f-v2")
+    s=8
+    p=3
+    f=2
+    c=0
+    register(
+        id="Foraging-{0}x{0}-{1}p-{2}f{3}-v2".format(s, p, f, "-coop" if c else ""),
+        entry_point="lbforaging.foraging:ForagingEnv",
+        kwargs={
+            "players": p,
+            "max_food_level": 10,
+            "field_size": (s, s),
+            "max_food": f,
+            "sight": s,
+            "max_episode_steps": 50,
+            "force_coop": c,
+        },
+    )
+    env = gym.make("Foraging-8x8-3p-2f-v2")
     obs = env.reset()
 
     for episode in range(game_count):
