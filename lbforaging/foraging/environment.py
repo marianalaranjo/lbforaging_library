@@ -6,6 +6,9 @@ from gym import Env
 import gym
 from gym.utils import seeding
 import numpy as np
+from lbforaging.agents.random_agent import RandomAgent
+from lbforaging.agents.greedy_agent import GreedyAgent
+from lbforaging.agents.heuristic_agent import H1, H2, H3, H4
 
 
 class Action(Enum):
@@ -89,6 +92,10 @@ class ForagingEnv(Env):
         self.logger = logging.getLogger(__name__)
         self.seed()
         self.players = [Player() for _ in range(players)]
+
+        for i in range(players):
+            self.players[i].set_controller(GreedyAgent(self.players[i]))
+            #print(self.players[i].name)
 
         self.field = np.zeros(field_size, np.int32)
 
@@ -480,10 +487,29 @@ class ForagingEnv(Env):
         self._gen_valid_moves()
 
         nobs, _, _, _ = self._make_gym_obs()
+
+        self.action_space = ()
+
+
+        for i in range(len(self.players)):
+            #print(self._make_obs(self.players[i]))
+            #print(self.players[i].step(self._make_obs(self.players[i])))
+            self.action_space += (self.players[i].step(self._make_obs(self.players[i])),)
+
         return nobs
 
     def step(self, actions):
         self.current_step += 1
+
+        """
+        self.action_space = ()
+
+
+        for i in range(len(self.players)):
+            print(self._make_obs(self.players[i]))
+            print(self.players[i].step(self._make_obs(self.players[i])))
+            self.action_space += (self.players[i].step(self._make_obs(self.players[i])),)
+        """
 
         for p in self.players:
             p.reward = 0
@@ -526,7 +552,6 @@ class ForagingEnv(Env):
                 loading_players.add(player)
 
         # and do movements for non colliding players
-
         for k, v in collisions.items():
             if len(v) > 1:  # make sure no more than an player will arrive at location
                 continue
@@ -571,6 +596,13 @@ class ForagingEnv(Env):
 
         for p in self.players:
             p.score += p.reward
+
+        self.action_space = ()
+
+        for i in range(len(self.players)):
+            #print(self._make_obs(self.players[i]))
+            #print(self.players[i].step(self._make_obs(self.players[i])))
+            self.action_space += (self.players[i].step(self._make_obs(self.players[i])),)
 
         return self._make_gym_obs()
 

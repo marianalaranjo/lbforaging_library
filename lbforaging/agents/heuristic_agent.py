@@ -1,7 +1,16 @@
 import random
 import numpy as np
-from foraging import Agent
-from foraging.environment import Action
+from enum import Enum
+from lbforaging.foraging.agent import Agent
+#from lbforaging.foraging.environment import Action
+
+class Action(Enum):
+    NONE = 0
+    NORTH = 1
+    SOUTH = 2
+    WEST = 3
+    EAST = 4
+    LOAD = 5
 
 
 class HeuristicAgent(Agent):
@@ -46,7 +55,8 @@ class H1(HeuristicAgent):
         y, x = self.observed_position
 
         if (abs(r - y) + abs(c - x)) == 1:
-            return Action.LOAD
+            return 5
+            #return Action.LOAD
 
         try:
             return self._move_towards((r, c), obs.actions)

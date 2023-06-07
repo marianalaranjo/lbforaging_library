@@ -5,6 +5,7 @@ import time
 import gym
 import numpy as np
 import lbforaging
+from lbforaging.foraging.environment import Action
 gym.logger.set_level(40)
 
 
@@ -23,7 +24,8 @@ def _game_loop(env, render):
 
     while not done:
 
-        actions = env.action_space.sample()
+        actions = env.action_space
+        #print(env.Observation)
 
         nobs, nreward, ndone, _ = env.step(actions)
         if sum(nreward) > 0:
