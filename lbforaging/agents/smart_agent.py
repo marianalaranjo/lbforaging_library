@@ -17,7 +17,7 @@ class SmartAgent(Agent):
     name = "Smart Agent"
 
     def step(self, obs):
-        print(obs.field)
+        #print(obs.field)
         for i in range(len(obs.players)):
             if(obs.players[i].is_self):
                 current_agent = i
@@ -28,8 +28,8 @@ class SmartAgent(Agent):
                 if obs.field[row][column] != 0:
                     preys += (row, column)
                     victims += [obs.field[row][column]]
-        print(preys)
-        print(victims)
+        #print(preys)
+        #print(victims)
 
         max_victims = -1
         if len(victims) == 1:
@@ -41,11 +41,11 @@ class SmartAgent(Agent):
                 elif victims[victim+1] > victims[victim] and victims[victim+1] > max_victims:
                     max_victims = victim + 1
         
-        print(max_victims)
+        #print(max_victims)
 
         if max_victims != -1:
             prey = (preys[max_victims], preys[max_victims+1])
-            print(prey)
+            #print(prey)
             return self.direction_to_go(obs, obs.players[current_agent].position, prey)
         
         closest_prey = self.closest_prey(obs.players[current_agent].position, preys)
