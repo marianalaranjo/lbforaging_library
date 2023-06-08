@@ -25,7 +25,7 @@ class GreedyAgent(Agent):
         for row in range(len(obs.field)):
             for column in range(len(obs.field[row])):
                 if obs.field[row][column] != 0:
-                    preys += (column, row)
+                    preys += (row, column)
 
         closest_prey = self.closest_prey(obs.players[current_agent].position, preys)
         prey_found = closest_prey is not None
@@ -39,10 +39,10 @@ class GreedyAgent(Agent):
     def direction_to_go(self, obs, agent_position, prey_position):
         distances = np.array(prey_position) - np.array(agent_position)
         abs_distances = np.absolute(distances)
-        if abs_distances[0]==0 and abs_distances[1]==1 and Action.NONE in obs.actions:
-            return Action.NONE
-        elif abs_distances[0]==1 and abs_distances[1]==0 and Action.NONE in obs.actions:
-            return Action.NONE
+        if abs_distances[0]==0 and abs_distances[1]==1 and Action.LOAD in obs.actions:
+            return Action.LOAD
+        elif abs_distances[0]==1 and abs_distances[1]==0 and Action.LOAD in obs.actions:
+            return Action.LOAD
         elif abs_distances[0] > abs_distances[1]:
             return self._close_horizontally(obs, distances)
         elif abs_distances[0] < abs_distances[1]:
