@@ -139,9 +139,9 @@ def main(game_count=1, render=False):
             results[episode]=steps
     
     final = {
-        "Greedy": results
+        "Smart": results
     }
-    compare_results(final, title="Greedy Agent", colors=["orange"])
+    compare_results(final, title="Smart Agent", colors=["orange"])
 
         
 
