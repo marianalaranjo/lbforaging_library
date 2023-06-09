@@ -39,6 +39,7 @@ class Player:
         self.reward = 0
         self.history = None
         self.current_step = None
+        self.current_prey = None
 
     def setup(self, position, level, field_size):
         self.history = []
@@ -74,7 +75,7 @@ class ForagingEnv(Env):
         ["field", "actions", "players", "game_over", "sight", "current_step"],
     )
     PlayerObservation = namedtuple(
-        "PlayerObservation", ["position", "level", "history", "reward", "is_self"]
+        "PlayerObservation", ["position", "level", "history", "current_prey", "reward", "is_self"]
     )  # reward is available only if is_self
 
     def __init__(
@@ -359,6 +360,7 @@ class ForagingEnv(Env):
                     level=a.level,
                     is_self=a == player,
                     history=a.history,
+                    current_prey = a.current_prey,
                     reward=a.reward if a == player else None,
                 )
                 for a in self.players
@@ -557,7 +559,11 @@ class ForagingEnv(Env):
 
         # and do movements for non colliding players
         for k, v in collisions.items():
+
             if len(v) > 1:  # make sure no more than an player will arrive at location
+                print("K & V:")
+                print(k)
+                print(v)
                 continue
             v[0].position = k
 
@@ -593,6 +599,10 @@ class ForagingEnv(Env):
                         adj_player_level * self._food_spawned
                     )  # normalize reward
             # and the food is removed
+            for i in range(len(self.players)):
+                self.players[i].current_prey = None
+                print("REMOVED PREY")
+                print(self.players[i].current_prey)
             self.field[frow, fcol] = 0
             self.solved +=1
 
@@ -609,7 +619,10 @@ class ForagingEnv(Env):
         for i in range(len(self.players)):
             #print(self._make_obs(self.players[i]))
             #print(self.players[i].step(self._make_obs(self.players[i])))
-            self.action_space += (self.players[i].step(self._make_obs(self.players[i])),)
+            action, current_prey = self.players[i].step(self._make_obs(self.players[i]))
+            self.players[i].current_prey = current_prey
+            self.action_space += (action,)
+            #print(self.players[i].current_prey)
 
         return self._make_gym_obs()
 
