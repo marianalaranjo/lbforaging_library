@@ -83,10 +83,10 @@ class GreedyAgent(Agent):
 
     def _close_horizontally(self, obs, distances, actions):
         print("CLOSE HORIZONTAL")
-        if distances[0] > 0 and Action.EAST.value in actions:
+        if distances[1] > 0 and Action.EAST.value in actions:
             print("EAST")
             return Action.EAST.value
-        elif distances[0] < 0 and Action.WEST.value in actions:
+        elif distances[1] < 0 and Action.WEST.value in actions:
             print("WEST")
             return Action.WEST.value
         # elif Action.NONE.value in actions:
@@ -98,10 +98,10 @@ class GreedyAgent(Agent):
 
     def _close_vertically(self, obs, distances, actions):
         print("CLOSE VERTICAL")
-        if distances[1] > 0 and Action.SOUTH.value in actions:
+        if distances[0] > 0 and Action.SOUTH.value in actions:
             print("SOUTH")
             return Action.SOUTH.value
-        elif distances[1] < 0 and Action.NORTH.value in actions:
+        elif distances[0] < 0 and Action.NORTH.value in actions:
             print("NORTH")
             return Action.NORTH.value
         # elif Action.NONE.value in actions:
