@@ -17,7 +17,7 @@ class SmartAgent(Agent):
     name = "Smart Agent"
 
     def step(self, obs):
-
+        coop = False
         for i in range(len(obs.players)):
             if(obs.players[i].is_self):
                 current_agent = i
@@ -40,25 +40,31 @@ class SmartAgent(Agent):
 
         if max_victims != -1:
             prey = (preys[max_victims*2], preys[max_victims*2+1])
-            number_of_agents = 0
-            for player in obs.players:
-                if prey == obs.players[current_agent].current_prey:
+            if coop:
+                number_of_agents = 0
+                for player in obs.players:
+                    if prey == obs.players[current_agent].current_prey:
+                        action = self.direction_to_go(obs, obs.players[current_agent].position, prey)
+                        return action, prey
+                    if prey == player.current_prey:
+                        number_of_agents+=1
+                
+                if number_of_agents == 0:
+
                     action = self.direction_to_go(obs, obs.players[current_agent].position, prey)
                     return action, prey
-                if prey == player.current_prey:
-                    number_of_agents+=1
-            
-            if number_of_agents == 0:
+                
+                elif obs.field[prey[0]][prey[1]] > number_of_agents*5:
+                    action = self.direction_to_go(obs, obs.players[current_agent].position, prey)
+                    return action, prey
 
-                action = self.direction_to_go(obs, obs.players[current_agent].position, prey)
-                return action, prey
-            
-            elif obs.field[prey[0]][prey[1]] > number_of_agents*5:
-                action = self.direction_to_go(obs, obs.players[current_agent].position, prey)
-                return action, prey
-
-            preys[max_victims*2]= 999
-            preys[max_victims*2+1] = 999
+                preys[max_victims*2]= 999
+                preys[max_victims*2+1] = 999
+            else:
+                for number in victims:
+                    if number != max_number:
+                        action = self.direction_to_go(obs, obs.players[current_agent].position, prey)
+                        return action, prey
         
         closest_prey = self.closest_prey(obs.players[current_agent].position, preys)
         prey_found = closest_prey is not None
