@@ -101,6 +101,7 @@ class ForagingEnv(Env):
         self.field = np.zeros(field_size, np.int32)
 
         self.penalty = penalty
+        self.solved = 0
         
         self.max_food = max_food
         self._food_spawned = 0.0
@@ -487,11 +488,11 @@ class ForagingEnv(Env):
         self.loaded = 0
         self._game_over = False
         self._gen_valid_moves()
+        self.solved = 0
 
         nobs, _, _, _ = self._make_gym_obs()
 
         self.action_space = ()
-
 
         for i in range(len(self.players)):
         #     #print(self._make_obs(self.players[i]))
@@ -593,6 +594,7 @@ class ForagingEnv(Env):
                     )  # normalize reward
             # and the food is removed
             self.field[frow, fcol] = 0
+            self.solved +=1
 
         self._game_over = (
             self.field.sum() == 0 or self._max_episode_steps <= self.current_step

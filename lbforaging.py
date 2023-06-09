@@ -87,6 +87,23 @@ def compare_results(results, confidence=0.95, title="Agents Comparison", metric=
         confidence=confidence, show=True, colors=colors
     )
 
+def bar_plot(solved):
+    fig = plt.figure(figsize = (10, 5))
+    
+
+    episodes = list(range(1,len(solved)+1,1))
+
+    # creating the bar plot
+    plt.bar(episodes, solved, color ='maroon',
+            width = 0.4)
+    plt.axhline(y=sum(solved) / len(solved),linewidth=1, color='blue')
+    plt.yticks(np.arange(0, max(solved)+1, 1))
+    plt.xticks(np.arange(1, max(episodes)+1, 1))
+    plt.xlabel("Episode")
+    plt.ylabel("No. of emergencies solved")
+    plt.title("Number of emergencies solved per episode")
+    plt.show()
+
 def main(game_count=1, render=False):
     s=8
     p=1
@@ -105,15 +122,19 @@ def main(game_count=1, render=False):
             "force_coop": c,
         },
     )
-    env = gym.make("Foraging-8x8-1p-3f-v2")
-    # obs = env.reset()
+    env = gym.make("Foraging-8x8-3p-2f-v2")
+    #obs = env.reset()
 
     results = np.zeros(game_count*f)
+    emergencies_solved= []
+    #steps_count = []
     for episode in range(game_count):
         # _game_loop(env, render)
         obs = env.reset()
         steps = 0
         done = False
+        emergencies_solved+= [0,]
+        #steps_count += [0,]
 
         if render:
             env.render()
@@ -124,6 +145,10 @@ def main(game_count=1, render=False):
             actions = env.action_space
 
             nobs, nreward, ndone, ninfo = env.step(actions)
+
+            if env.solved > emergencies_solved[episode]:
+                emergencies_solved[episode]+=1
+
             if sum(nreward) > 0:
                 print(nreward)
 
@@ -138,6 +163,18 @@ def main(game_count=1, render=False):
         if results[episode]==0:
             results[episode]=steps
     
+    print("Mean of Emergencies Solved:")
+    print(sum(emergencies_solved) / len(emergencies_solved))
+
+    bar_plot(emergencies_solved)
+    bar_plot(results)
+
+    """
+    sum = 0
+    for el in emergencies_solved:
+        sum += el
+        sum /= len(emergencies_solved)
+    """
     final = {
         "Smart": results
     }
