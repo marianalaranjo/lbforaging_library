@@ -120,7 +120,6 @@ def main(game_count=1, render=False):
         },
     )
     env = gym.make("Foraging-10x10-3p-8f-v2")
-    #obs = env.reset()
 
     size_results = game_count*f
     results = np.zeros(size_results)
@@ -160,12 +159,9 @@ def main(game_count=1, render=False):
             else:
                 results[last_position+i] = env.solved_steps[i]
         last_position = last_position+i+1
-        print(env.solved_steps)
-        print(results)
     
 
     bar_plot(emergencies_solved)
-    #bar_plot(results)
 
     final = {
         env.players[0].name: results
