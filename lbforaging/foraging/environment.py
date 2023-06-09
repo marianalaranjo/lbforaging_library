@@ -95,7 +95,7 @@ class ForagingEnv(Env):
         self.players = [Player() for _ in range(players)]
 
         for i in range(players):
-            self.players[i].set_controller(SmartAgent(self.players[i]))
+            self.players[i].set_controller(GreedyAgent(self.players[i]))
             #print(self.players[i].name)
 
         self.field = np.zeros(field_size, np.int32)
@@ -494,9 +494,11 @@ class ForagingEnv(Env):
 
 
         for i in range(len(self.players)):
-            #print(self._make_obs(self.players[i]))
-            #print(self.players[i].step(self._make_obs(self.players[i])))
-            self.action_space += (self.players[i].step(self._make_obs(self.players[i])),)
+        #     #print(self._make_obs(self.players[i]))
+        #     #print(self.players[i].step(self._make_obs(self.players[i])))
+        #     # self.action_space += (self.players[i].step(self._make_obs(self.players[i])),)
+        #     action = int(input("ACTION: "))
+            self.action_space += (Action.NONE,)
 
         return nobs
 
@@ -504,14 +506,14 @@ class ForagingEnv(Env):
         self.current_step += 1
         self.loaded = 0
         
-        # self.action_space = ()
+        #self.action_space = ()
 
         # for i in range(len(self.players)):
         #     #print(self._make_obs(self.players[i]))
         #     #print(self.players[i].step(self._make_obs(self.players[i])))
         #     self.action_space += (self.players[i].step(self._make_obs(self.players[i])),)
         
-
+        # input()
         for p in self.players:
             p.reward = 0
 

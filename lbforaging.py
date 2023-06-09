@@ -89,8 +89,8 @@ def compare_results(results, confidence=0.95, title="Agents Comparison", metric=
 
 def main(game_count=1, render=False):
     s=8
-    p=3
-    f=2
+    p=1
+    f=3
     c=0
     register(
         id="Foraging-{0}x{0}-{1}p-{2}f{3}-v2".format(s, p, f, "-coop" if c else ""),
@@ -105,8 +105,8 @@ def main(game_count=1, render=False):
             "force_coop": c,
         },
     )
-    env = gym.make("Foraging-8x8-3p-2f-v2")
-    obs = env.reset()
+    env = gym.make("Foraging-8x8-1p-3f-v2")
+    # obs = env.reset()
 
     results = np.zeros(game_count*f)
     for episode in range(game_count):
