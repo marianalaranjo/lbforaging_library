@@ -14,30 +14,6 @@ from gym.envs.registration import register
 
 logger = logging.getLogger(__name__)
 
-
-def _game_loop(env, render):
-    obs = env.reset()
-    steps = 0
-    done = False
-
-    if render:
-        env.render()
-        time.sleep(0.5)
-
-    while not done:
-        steps+=1
-        actions = env.action_space
-
-        nobs, nreward, ndone, _ = env.step(actions)
-        if sum(nreward) > 0:
-            print(nreward)
-
-        if render:
-            env.render()
-            time.sleep(0.5)
-
-        done = np.all(ndone)
-
 def z_table(confidence):
     return {
         0.99: 2.576,
