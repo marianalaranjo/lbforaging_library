@@ -17,11 +17,6 @@ class SmartAgent(Agent):
     name = "Smart Agent"
 
     def step(self, obs):
-<<<<<<< HEAD
-
-=======
-        #print(obs.field)
->>>>>>> 853336b888e098e13e1d24e262e6b471ab89f73f
         for i in range(len(obs.players)):
             if(obs.players[i].is_self):
                 current_agent = i
@@ -32,11 +27,6 @@ class SmartAgent(Agent):
                 if obs.field[row][column] != 0:
                     preys += (row, column)
                     victims += [obs.field[row][column]]
-<<<<<<< HEAD
-=======
-        #print(preys)
-        #print(victims)
->>>>>>> 853336b888e098e13e1d24e262e6b471ab89f73f
 
         max_victims = -1
         if len(victims) == 1:
@@ -47,19 +37,17 @@ class SmartAgent(Agent):
                     max_victims = victim
                 elif victims[victim+1] > victims[victim] and victims[victim+1] > max_victims:
                     max_victims = victim + 1
-<<<<<<< HEAD
+        print("VICTIMS")
+        print(victims)
+        print("MAX_VICTIMS")
+        print(max_victims)
 
         if max_victims != -1:
-            prey = (preys[max_victims], preys[max_victims+1])
-=======
-        
-        #print(max_victims)
-
-        if max_victims != -1:
-            prey = (preys[max_victims], preys[max_victims+1])
-            #print(prey)
->>>>>>> 853336b888e098e13e1d24e262e6b471ab89f73f
-            return self.direction_to_go(obs, obs.players[current_agent].position, prey)
+            prey = (preys[max_victims*2], preys[max_victims*2+1])
+            print(prey)
+            action = self.direction_to_go(obs, obs.players[current_agent].position, prey)
+            print(action)
+            return action
         
         closest_prey = self.closest_prey(obs.players[current_agent].position, preys)
         prey_found = closest_prey is not None
@@ -71,19 +59,30 @@ class SmartAgent(Agent):
         return action
             
     def direction_to_go(self, obs, agent_position, prey_position):
+        actions = ()
+        for el in range(len(obs.actions)):
+            actions += (obs.actions[el].value, )
         distances = np.array(prey_position) - np.array(agent_position)
         abs_distances = np.absolute(distances)
-        if abs_distances[0]==0 and abs_distances[1]==1 and Action.LOAD in obs.actions:
-            return Action.LOAD
-        elif abs_distances[0]==1 and abs_distances[1]==0 and Action.LOAD in obs.actions:
-            return Action.LOAD
-        elif abs_distances[0] > abs_distances[1]:
-            return self._close_horizontally(obs, distances)
+        print("DISTANCES: ")
+        print(distances)
+        print(distances[0])
+        print(distances[1])
+        print("ABSOLUTE DISTANCES:")
+        print(abs_distances)
+        print(abs_distances[0])
+        print(abs_distances[1])
+        if abs_distances[0]==0 and abs_distances[1]==1 and Action.LOAD.value in actions:
+            return Action.LOAD.value
+        elif abs_distances[0]==1 and abs_distances[1]==0 and Action.LOAD.value in actions:
+            return Action.LOAD.value
         elif abs_distances[0] < abs_distances[1]:
-            return self._close_vertically(obs, distances)
+            return self._close_horizontally(obs, distances,actions)
+        elif abs_distances[0] > abs_distances[1]:
+            return self._close_vertically(obs, distances, actions)
         else:
             roll = random.uniform(0, 1)
-            return self._close_horizontally(obs, distances) if roll > 0.5 else self._close_vertically(obs, distances)
+            return self._close_horizontally(obs, distances, actions) if roll > 0.5 else self._close_vertically(obs, distances, actions)
 
     def closest_prey(self, agent_position, prey_positions):
         min = math.inf
@@ -97,33 +96,39 @@ class SmartAgent(Agent):
                 closest_prey_position = prey_position
         return closest_prey_position
 
-    def _close_horizontally(self, obs, distances):
-        if distances[0] > 0 and Action.EAST in obs.actions:
-            return Action.EAST
-        elif distances[0] < 0 and Action.WEST in obs.actions:
-            return Action.WEST
+    def _close_horizontally(self, obs, distances, actions):
+        print("CLOSE HORIZONTAL")
+        if distances[1] > 0 and Action.EAST.value in actions:
+            print("EAST")
+            return Action.EAST.value
+        elif distances[1] < 0 and Action.WEST.value in actions:
+            print("WEST")
+            return Action.WEST.value
         else:
+            print("RANDOM")
             return random.choice(obs.actions)
 
-    def _close_vertically(self, obs, distances):
-        if distances[1] > 0 and Action.SOUTH in obs.actions:
-            return Action.SOUTH
-        elif distances[1] < 0 and Action.NORTH in obs.actions:
-            return Action.NORTH
+    def _close_vertically(self, obs, distances, actions):
+        print("CLOSE VERTICAL")
+        if distances[0] > 0 and Action.SOUTH.value in actions:
+            print("SOUTH")
+            return Action.SOUTH.value
+        elif distances[0] < 0 and Action.NORTH.value in actions:
+            print("NORTH")
+            return Action.NORTH.value
         else:
+            print("RANDOM")
             return random.choice(obs.actions)
         
 # class ConventionAgent(SmartAgent):
+
+
+
 #     def action(self) -> int:
 #         agent_order = self.conventions[0]
 #         action_order = self.conventions[1]
 #         prey_pos = self.observation[self.n_agents * 2:]
 #         agent_pos = (self.observation[self.agent_id * 2], self.observation[self.agent_id * 2 + 1])
-
-#         # TODO: Use the self.conventions attribute to pick how the agent should
-#         # corner the prey and then move the agent in the corresponding direction.
-#         # To implement the movement of the predator towards the prey you should
-#         # re-use other method(s) of this class.
 #         agent_priority = agent_order.index(self.agent_id)
 #         return self.advance_to_pos(agent_pos, prey_pos, action_order[agent_priority])
 

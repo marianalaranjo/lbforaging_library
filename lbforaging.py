@@ -106,15 +106,15 @@ def bar_plot(solved):
 
 def main(game_count=1, render=False):
     s=8
-    p=1
-    f=3
+    p=2
+    f=6
     c=0
     register(
         id="Foraging-{0}x{0}-{1}p-{2}f{3}-v2".format(s, p, f, "-coop" if c else ""),
         entry_point="lbforaging.foraging:ForagingEnv",
         kwargs={
             "players": p,
-            "max_food_level": 5,
+            "max_food_level": 10,
             "field_size": (s, s),
             "max_food": f,
             "sight": s,
@@ -122,7 +122,7 @@ def main(game_count=1, render=False):
             "force_coop": c,
         },
     )
-    env = gym.make("Foraging-8x8-3p-2f-v2")
+    env = gym.make("Foraging-8x8-2p-6f-v2")
     #obs = env.reset()
 
     results = np.zeros(game_count*f)
