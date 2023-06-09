@@ -102,9 +102,9 @@ def bar_plot(solved):
     plt.show()
 
 def main(game_count=1, render=False):
-    s=8
-    p=2
-    f=6
+    s=10
+    p=3
+    f=8
     c=0
     register(
         id="Foraging-{0}x{0}-{1}p-{2}f{3}-v2".format(s, p, f, "-coop" if c else ""),
@@ -119,9 +119,12 @@ def main(game_count=1, render=False):
             "force_coop": c,
         },
     )
-    env = gym.make("Foraging-8x8-2p-6f-v2")
+    env = gym.make("Foraging-10x10-3p-8f-v2")
+    #obs = env.reset()
 
-    results = np.zeros(game_count*f)
+    size_results = game_count*f
+    results = np.zeros(size_results)
+    last_position = 0
     emergencies_solved= []
     for episode in range(game_count):
         obs = env.reset()
@@ -137,7 +140,7 @@ def main(game_count=1, render=False):
             steps+=1
             actions = env.action_space
 
-            nobs, nreward, ndone, ninfo = env.step(actions)
+            nobs, nreward, ndone, _ = env.step(actions)
 
             if env.solved > emergencies_solved[episode]:
                 emergencies_solved[episode]+=1
@@ -150,15 +153,19 @@ def main(game_count=1, render=False):
                 time.sleep(0.5)
 
             done = np.all(ndone)
-            if ninfo != 0:
-                results[episode]=ninfo[0]
-
-        if results[episode]==0:
-            results[episode]=steps
+        
+        for i in range(len(env.solved_steps)):
+            if env.solved_steps[i] == 0:
+                results[last_position + i] = 50
+            else:
+                results[last_position+i] = env.solved_steps[i]
+        last_position = last_position+i+1
+        print(env.solved_steps)
+        print(results)
     
 
     bar_plot(emergencies_solved)
-    bar_plot(results)
+    #bar_plot(results)
 
     final = {
         env.players[0].name: results

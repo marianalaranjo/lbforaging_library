@@ -104,6 +104,7 @@ class ForagingEnv(Env):
         self.solved = 0
         
         self.max_food = max_food
+        self.solved_steps = np.zeros(self.max_food)
         self._food_spawned = 0.0
         self.max_food_level = max_food_level
         self.sight = sight
@@ -465,7 +466,7 @@ class ForagingEnv(Env):
         nreward = [get_player_reward(obs) for obs in observations]
         ndone = [obs.game_over for obs in observations]
         # ninfo = [{'observation': obs} for obs in observations]
-        ninfo = [self.loaded]
+        ninfo = {}
         
         # check the space of obs
         for i, obs in  enumerate(nobs):
@@ -482,10 +483,10 @@ class ForagingEnv(Env):
             self.max_food, self.max_food_level
         )
         self.current_step = 0
-        self.loaded = 0
         self._game_over = False
         self._gen_valid_moves()
         self.solved = 0
+        self.solved_steps = np.zeros(self.max_food)
 
         nobs, _, _, _ = self._make_gym_obs()
 
@@ -499,7 +500,6 @@ class ForagingEnv(Env):
 
     def step(self, actions):
         self.current_step += 1
-        self.loaded = 0
         
 
         for p in self.players:
@@ -588,6 +588,7 @@ class ForagingEnv(Env):
   
             self.field[frow, fcol] = 0
             self.solved +=1
+            self.solved_steps[self.solved-1] = self.current_step
 
         self._game_over = (
             self.field.sum() == 0 or self._max_episode_steps <= self.current_step
