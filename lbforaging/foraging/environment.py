@@ -97,7 +97,6 @@ class ForagingEnv(Env):
 
         for i in range(players):
             self.players[i].set_controller(SmartAgent(self.players[i]))
-            #print(self.players[i].name)
 
         self.field = np.zeros(field_size, np.int32)
 
@@ -137,10 +136,8 @@ class ForagingEnv(Env):
         if not self._grid_observation:
             field_x = self.field.shape[1]
             field_y = self.field.shape[0]
-            # field_size = field_x * field_y
 
             max_food = self.max_food
-            #max_food_level = self.max_player_level * len(self.players)
 
             min_obs = [-1, -1, 0] * max_food + [-1, -1, 0] * len(self.players)
             max_obs = [field_x-1, field_y-1, self.max_food_level] * max_food + [
@@ -157,7 +154,6 @@ class ForagingEnv(Env):
             agents_max = np.ones(grid_shape, dtype=np.float32) * 1
 
             # foods layer: foods level
-            #max_food_level = self.max_player_level * len(self.players)
             foods_min = np.zeros(grid_shape, dtype=np.float32)
             foods_max = np.ones(grid_shape, dtype=np.float32) * self.max_food_level
 
@@ -481,10 +477,9 @@ class ForagingEnv(Env):
     def reset(self):
         self.field = np.zeros(self.field_size, np.int32)
         self.spawn_players(1)
-        #player_levels = sorted([player.level for player in self.players])
 
         self.spawn_food(
-            self.max_food, self.max_food_level#max_level=sum(player_levels[:3])
+            self.max_food, self.max_food_level
         )
         self.current_step = 0
         self.loaded = 0
@@ -497,10 +492,7 @@ class ForagingEnv(Env):
         self.action_space = ()
 
         for i in range(len(self.players)):
-        #     #print(self._make_obs(self.players[i]))
-        #     #print(self.players[i].step(self._make_obs(self.players[i])))
-        #     # self.action_space += (self.players[i].step(self._make_obs(self.players[i])),)
-        #     action = int(input("ACTION: "))
+
             self.action_space += (Action.NONE,)
 
         return nobs
@@ -509,14 +501,7 @@ class ForagingEnv(Env):
         self.current_step += 1
         self.loaded = 0
         
-        #self.action_space = ()
 
-        # for i in range(len(self.players)):
-        #     #print(self._make_obs(self.players[i]))
-        #     #print(self.players[i].step(self._make_obs(self.players[i])))
-        #     self.action_space += (self.players[i].step(self._make_obs(self.players[i])),)
-        
-        #input()
         for p in self.players:
             p.reward = 0
 
@@ -558,12 +543,11 @@ class ForagingEnv(Env):
                 loading_players.add(player)
 
         # and do movements for non colliding players
+
         for k, v in collisions.items():
 
             if len(v) > 1:  # make sure no more than an player will arrive at location
-                print("K & V:")
-                print(k)
-                print(v)
+
                 continue
             v[0].position = k
 
@@ -579,7 +563,7 @@ class ForagingEnv(Env):
                 p for p in adj_players if p in loading_players or p is player
             ]
 
-            # adj_player_level = sum([a.level for a in adj_players])
+
             adj_player_level = len(adj_players)
 
             loading_players = loading_players - set(adj_players)
@@ -601,8 +585,7 @@ class ForagingEnv(Env):
             # and the food is removed
             for i in range(len(self.players)):
                 self.players[i].current_prey = None
-                print("REMOVED PREY")
-                print(self.players[i].current_prey)
+  
             self.field[frow, fcol] = 0
             self.solved +=1
 
@@ -617,12 +600,11 @@ class ForagingEnv(Env):
         self.action_space = ()
 
         for i in range(len(self.players)):
-            #print(self._make_obs(self.players[i]))
-            #print(self.players[i].step(self._make_obs(self.players[i])))
+
             action, current_prey = self.players[i].step(self._make_obs(self.players[i]))
             self.players[i].current_prey = current_prey
             self.action_space += (action,)
-            #print(self.players[i].current_prey)
+  
 
         return self._make_gym_obs()
 

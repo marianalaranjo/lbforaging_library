@@ -8,4 +8,4 @@ class RandomAgent(Agent):
     name = "Random Agent"
 
     def step(self, obs):
-        return random.choice(obs.actions)
+        return random.choice(obs.actions), None

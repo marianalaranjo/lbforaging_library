@@ -16,8 +16,6 @@ logger = logging.getLogger(__name__)
 
 
 def _game_loop(env, render):
-    """
-    """
     obs = env.reset()
     steps = 0
     done = False
@@ -39,7 +37,6 @@ def _game_loop(env, render):
             time.sleep(0.5)
 
         done = np.all(ndone)
-    #print(env.players[0].score, env.players[1].score)
 
 def z_table(confidence):
     return {
@@ -123,18 +120,14 @@ def main(game_count=1, render=False):
         },
     )
     env = gym.make("Foraging-8x8-2p-6f-v2")
-    #obs = env.reset()
 
     results = np.zeros(game_count*f)
     emergencies_solved= []
-    #steps_count = []
     for episode in range(game_count):
-        # _game_loop(env, render)
         obs = env.reset()
         steps = 0
         done = False
         emergencies_solved+= [0,]
-        #steps_count += [0,]
 
         if render:
             env.render()
@@ -163,22 +156,14 @@ def main(game_count=1, render=False):
         if results[episode]==0:
             results[episode]=steps
     
-    print("Mean of Emergencies Solved:")
-    print(sum(emergencies_solved) / len(emergencies_solved))
 
     bar_plot(emergencies_solved)
     bar_plot(results)
 
-    """
-    sum = 0
-    for el in emergencies_solved:
-        sum += el
-        sum /= len(emergencies_solved)
-    """
     final = {
-        "Smart": results
+        env.players[0].name: results
     }
-    compare_results(final, title="Smart Agent", colors=["orange"])
+    compare_results(final, title=env.players[0].name, colors=["orange"])
 
         
 
